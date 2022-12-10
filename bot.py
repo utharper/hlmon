@@ -3,32 +3,6 @@ import discord
 import asyncio
 import time
 
-class Player:
-    def __init__(self, name, score, duration):
-        self.name = name
-        self.score = score
-        self.duration = duration
-
-class Server:
-    def __init__(self, name, icon, ip, port, override, channel, message, updatedate, updatetime):
-        self.name = name
-        self.icon = icon
-        self.ip = ip
-        self.port = port
-        self.override = override
-        self.channel = channel
-        self.message = message
-        self.updatedate = updatedate
-        self.updatetime = updatetime
-
-def duration(seconds):
-    h = seconds // 3600
-    m = seconds % 3600 // 60
-    s = seconds % 3600 % 60
-    if(h):
-        return f"{h}h {m}m {s}s"
-    return f"{m}m {s}s"
-
 auto_refresh_time = 60
 url_connect = "https://hl2dm.community/connect/?"
 url_thumbs  = "https://fastdl.hl2dm.community/maps/thumbs/"
@@ -37,9 +11,38 @@ servers     = []
 numServers  = 0
 client      = discord.Client(intents=discord.Intents.default())
 
-bot_token   = "DISCORD_BOT_TOKEN"
+class Server:
+    def __init__(self, name, icon, ip, port, override, channel, message, updatedate, updatetime):
+        self.name = name
+        self.icon = icon # prefix emoticon, used for country flags
+        self.ip = ip
+        self.port = port
+        self.override = override # if True, hostname will be overriden by the server name you provided
+        self.channel = channel # channel ID to broadcast status to
+        self.message = message # set within function
+        self.updatedate = updatedate # set within function
+        self.updatetime = updatetime # set within function
+        
+class Player:
+    def __init__(self, name, score, duration):
+        self.name = name
+        self.score = score
+        self.duration = duration
 
-### DEFINE SERVERS HERE: ###
+# Connected time format consistent with game server browser:
+def duration(seconds):
+    h = seconds // 3600
+    m = seconds % 3600 // 60
+    s = seconds % 3600 % 60
+    if(h):
+        return f"{h}h {m}m {s}s"
+    return f"{m}m {s}s"
+
+############################
+# DEFINE SERVERS HERE:
+
+bot_token = "DISCORD_BOT_TOKEN"
+
 servers.append (Server("Australian Deathmatch", ":flag_au:", "au.hl2dm.community", 27015, True, 667641710742077460, 0, 0, 0))
 servers.append (Server("VirtuousGamers - Germany", ":flag_de:", "vg1.hl2dm.org", 27015, True, 667641755386118154, 0, 0, 0))
 servers.append (Server("VirtuousGamers - Illinois", ":flag_us:", "vg3.hl2dm.org", 27015, True, 667641768753496064, 0, 0, 0))
@@ -70,17 +73,14 @@ async def broadcast_info(server):
     #set embed values based on status
     if (server_status == 0):
         server_description = "**~~OFFLINE~~**"
-        #server_icon = ":red_circle:"
         server_color = 0xDD2E44
         
     else: 
         if(queryInfo.password_protected):
             server_description = "**__ONLINE__** (password protected)\n\n"
-            #server_icon = ":yellow_circle:"
             server_color = 0xFDCB58
         else:
             server_description = "**__ONLINE__**\n\n"
-            #server_icon = ":green_circle:"
             server_color = 0x78B159
             
         server_description += f"**Map:**\u2003{queryInfo.map_name}\n**Mode:**\u2002{queryInfo.game}\n**Players:**\u2002{queryInfo.player_count} / {queryInfo.max_players}"
