@@ -105,9 +105,12 @@ async def broadcast_info(server):
 
             server_players.sort(key=lambda x: x.score, reverse=True) # sort by score
 
-            embed.add_field(name="Player Name", value="\n".join(player.name for player in server_players), inline=True)
-            embed.add_field(name="Score", value="\n".join(str(player.score) for player in server_players), inline=True)
-            embed.add_field(name="Connected time", value="\n".join(duration(player.duration) for player in server_players), inline=True)
+            if(len(server_players[0].name)):
+                server_players.sort(key=lambda x: x.score, reverse=True) # sort by score
+                
+                embed.add_field(name="Player Name", value="\n".join(player.name for player in server_players), inline=True)
+                embed.add_field(name="Score", value="\n".join(str(player.score) for player in server_players), inline=True)
+                embed.add_field(name="Connected time", value="\n".join(duration(player.duration) for player in server_players), inline=True)
 
         # connect link [whitespace for width]
         embed.add_field(name="**\u2002**",value = f"**[Connect to server]({url_connect}{server.ip}:{server.port})**⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀", inline=False)
